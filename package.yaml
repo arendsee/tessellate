@@ -1,0 +1,36 @@
+name:             tesselation
+version:          0.1.0
+homepage:         https://github.com/arendsee/tesselation
+synopsis:         An tesselation generator
+description:      See GitHub README <https://github.com/arendsee/tesselation#readme>
+category:         Language
+license:          MIT
+license-file:     LICENSE
+author:           "Zebulun Arendsee" 
+maintainer:       "zbwrbz@gmail.com"
+github:           "arendsee/lsystem"
+bug-reports:      https://github.com/arendsee/tesselation/issues
+copyright:        "2018 Zebulun Arendsee"
+
+extra-source-files:
+  - README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+  - diagrams-lib
+  - diagrams-svg
+
+library:
+  source-dirs: src
+
+executables:
+  tess:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -haddock
+    dependencies:
+    - tesselation

@@ -1,0 +1,5 @@
+lsystem.cabal
+.stack-work/
+stack.yaml.lock
+dist/
+*.svg

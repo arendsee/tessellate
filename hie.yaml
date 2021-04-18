@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "tesselation:lib"
+
+    - path: "./app/Main.hs"
+      component: "tesselation:exe:tess"
+
+    - path: "./app/Paths_tesselation.hs"
+      component: "tesselation:exe:tess"

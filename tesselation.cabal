@@ -1,0 +1,52 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.3.
+--
+-- see: https://github.com/sol/hpack
+
+name:           tesselation
+version:        0.1.0
+synopsis:       An tesselation generator
+description:    See GitHub README <https://github.com/arendsee/tesselation#readme>
+category:       Language
+homepage:       https://github.com/arendsee/tesselation
+bug-reports:    https://github.com/arendsee/tesselation/issues
+author:         Zebulun Arendsee
+maintainer:     zbwrbz@gmail.com
+copyright:      2018 Zebulun Arendsee
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/arendsee/lsystem
+
+library
+  exposed-modules:
+      Tesselation
+  other-modules:
+      Paths_tesselation
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , diagrams-lib
+    , diagrams-svg
+  default-language: Haskell2010
+
+executable tess
+  main-is: Main.hs
+  other-modules:
+      Paths_tesselation
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -haddock
+  build-depends:
+      base >=4.7 && <5
+    , diagrams-lib
+    , diagrams-svg
+    , tesselation
+  default-language: Haskell2010
