@@ -15,13 +15,5 @@ readInt :: String -> Int
 readInt s = case reads s :: [(Int,String)] of
   [(x, "")] -> x
   [] -> error "Expected a '.' delimited list of integers, such as '3.4.3.6'"
-    
 
--- main :: IO ()
--- main = do
---   args <- getArgs
---   case args of
---     [x] -> mainWith . render . regular 0 4 $ map readInt (split '.' x)
---     _ -> error "Expected exactly one argument"
-
-main = mainWith . render $ regular 0 4 [3,4,3,6]
+main = mainWith myFigs
