@@ -25,7 +25,7 @@ angleStroke :: Double -> Diagram S.B
 angleStroke a = fromOffsets [TwoD.e (a @@ rad)] # lw veryThin
 
 renderAngleTree :: RoseTree Double -> Diagram S.B
-renderAngleTree (RoseTree _ xs) = mconcat [beside (r2 (cos a, sin a)) (angleStroke a) (renderAngleTree x) | x@(RoseTree a _) <- xs]
+renderAngleTree (RoseTree _ xs) = foldl atop mempty [atop (angleStroke a) (translate (r2 (cos a, sin a)) (renderAngleTree x)) | x@(RoseTree a _) <- xs]
 
 -- This first draft of the tree maker does not ensure paths are unique, so the
 -- tree grows exponentially. Every node in the tree Every node in the tree
@@ -36,7 +36,7 @@ badTileTree
   :: Int   -- tree depth
   -> [Int] -- tiling pattern (e.g., 3.4.6.4)
   -> RoseTree Double -- this vertex
-badTileTree = makeBadTileTree 0 where
+badTileTree = makeBadTileTree pi where
   makeBadTileTree
     :: Double -- angle
     -> Int -- depth
@@ -47,14 +47,20 @@ badTileTree = makeBadTileTree 0 where
     | otherwise = RoseTree angle
         [
           makeBadTileTree
-            (newAngle angle (take (i+1) clock))  -- calculate the child angle relative to parent 
+            (newAngle angle (take i clock))  -- calculate the child angle relative to parent 
             (d-1)  -- one step closer to the end
-            (drop i clock ++ take i clock)  -- shift the clock for the child
+            (reverse (take i clock) ++ reverse (drop i clock))  -- shift the clock for the child
         | i <- [0 .. length clock - 1]
         ]
 
+  -- the angle from the parent origin to the child origin
+  --       c       
+  --      / 
+  --     /      
+  --   p/_r_______      
+  --                newAngle is angle r
   newAngle :: Double -> [Int] -> Double
-  newAngle angle clock = sum (map innerAngle clock)
+  newAngle angle clock = -1 * sum (map innerAngle clock) + angle + pi
 
 
 -- minimal distance from origin to a face
@@ -116,6 +122,20 @@ myFigs = foldl (beside (r2 (0,-1))) mempty
  , regCycle [3,3,3,4,4]
  , regCycle [12,3,12]
  , lw veryThin . strokeLocTrail . fromOffsets $ [TwoD.e (60 @@ deg), TwoD.e (30 @@ deg)]
- , renderAngleTree $ badTileTree 3 [3,4,6,4]
- , renderAngleTree $ badTileTree 3 [3,3,3,4,4]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,4,6,4] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,3,4,4] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,12,12] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [4,8,8] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,4,3,4] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,6,3,6] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,3,3,6] | i <- [0..5]]
+
+ , foldr1 (|||) [renderAngleTree $ badTileTree i [4,6,12] | i <- [0..5]]
  ]
