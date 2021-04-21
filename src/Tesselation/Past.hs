@@ -2,30 +2,11 @@
 {-# LANGUAGE FlexibleContexts          #-}
 {-# LANGUAGE TypeFamilies              #-}
 
-module Tesselation (myFigs) where
+module Tesselation.Past () where
 
-import Diagrams.Prelude
+import Tesselation.Geometry
 import qualified Diagrams.Backend.SVG.CmdLine as S
 import qualified Diagrams.TwoD.Vector as TwoD
-
-data RoseTree a = RoseTree a [RoseTree a]
-
--- counvert a double to a large int that is used to check for node existence in
--- maps. The original doubles cannot be used because imprecision screw equality.
-preciseHash :: Double -> Int
-preciseHash x = round(x * 2^32)
-
-ngon :: Int ->  Diagram S.B
-ngon i = regPoly i 1 # lw veryThin
-
-renderPath :: [Double] -> Diagram S.B
-renderPath = lw veryThin . strokeLocTrail . fromOffsets . map (\x -> TwoD.e (x @@ rad))
-
-angleStroke :: Double -> Diagram S.B
-angleStroke a = fromOffsets [TwoD.e (a @@ rad)] # lw veryThin
-
-renderAngleTree :: RoseTree Double -> Diagram S.B
-renderAngleTree (RoseTree _ xs) = foldl atop mempty [atop (angleStroke a) (translate (r2 (cos a, sin a)) (renderAngleTree x)) | x@(RoseTree a _) <- xs]
 
 -- This first draft of the tree maker does not ensure paths are unique, so the
 -- tree grows exponentially. Every node in the tree Every node in the tree
@@ -62,47 +43,8 @@ badTileTree = makeBadTileTree pi where
   newAngle :: Double -> [Int] -> Double
   newAngle angle clock = -1 * sum (map innerAngle clock) + angle + pi
 
-
--- minimal distance from origin to a face
-faceDistance :: Int -> Double
-faceDistance i = 1 / (2 * tan (pi / fromIntegral i)) 
-
--- the angle between the ith face of an n-gon and origin
-faceAngle :: Int -> Int -> Double
-faceAngle n i = - pi/2 - (fromIntegral i / fromIntegral n) * 2 * pi
-
-cornerDistance :: Int -> Double
-cornerDistance i = 1 / (2 * sin (pi / fromIntegral i)) 
-
-cornerAngle :: Int -> Int -> Double
-cornerAngle n i = faceAngle n i - pi / fromIntegral n
-
--- the inside angle of a regular n-gon
-innerAngle :: Int -> Double
-innerAngle i = pi * (1 - 2 / fromIntegral i)
-
-cornerPoly :: Int -> Diagram S.B
-cornerPoly n =
-  let a = cornerAngle n 0 + pi
-      d = cornerDistance n
-  in translate (r2 (d * cos a, d * sin a)) $ ngon n
-
-regularOffset :: Int -> Int -> Int -> Diagram S.B -> Diagram S.B
-regularOffset i n m x =
-  let a = faceAngle n i
-      d = faceDistance n + faceDistance m
-      rot = -1 * (pi/2 - a) @@ rad
-  in
-    translate (r2 (d * cos a, d * sin a)) (rotate rot x)
-
-regCycle :: [Int] -> Diagram S.B
-regCycle = f 0  where
-  f :: Double -> [Int] -> Diagram S.B
-  f _ [] = mempty
-  f r (i:rs) = rotate (r @@ rad) (cornerPoly i # lw veryThin) <> f (r + innerAngle i) rs
-
-myFigs :: Diagram S.B
-myFigs = foldl (beside (r2 (0,-1))) mempty
+myPastFigs :: Diagram S.B
+myPastFigs = foldl (beside (r2 (0,-1))) mempty
  [ circle 1
  , circle 1 # fc green <> pentagon 5 # fc red
  , circle 1 # fc green ||| pentagon 5 # fc red
@@ -122,20 +64,12 @@ myFigs = foldl (beside (r2 (0,-1))) mempty
  , regCycle [3,3,3,4,4]
  , regCycle [12,3,12]
  , lw veryThin . strokeLocTrail . fromOffsets $ [TwoD.e (60 @@ deg), TwoD.e (30 @@ deg)]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,4,6,4] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,3,4,4] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,12,12] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [4,8,8] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,4,3,4] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,6,3,6] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,3,3,6] | i <- [0..5]]
-
  , foldr1 (|||) [renderAngleTree $ badTileTree i [4,6,12] | i <- [0..5]]
  ]

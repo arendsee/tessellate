@@ -1,6 +1,6 @@
 module Main where
 
-import Tesselation
+import Tesselation.Tesselation (myFigs)
 import System.Environment (getArgs)
 import Data.List (unfoldr)
 import Diagrams.Backend.SVG.CmdLine (mainWith)

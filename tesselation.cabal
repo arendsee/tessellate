@@ -26,15 +26,19 @@ source-repository head
 
 library
   exposed-modules:
-      Tesselation
+      Tesselation.Geometry
+      Tesselation.Past
+      Tesselation.Tesselation
   other-modules:
       Paths_tesselation
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , diagrams-lib
     , diagrams-svg
+    , mtl
   default-language: Haskell2010
 
 executable tess
@@ -46,7 +50,9 @@ executable tess
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -haddock
   build-depends:
       base >=4.7 && <5
+    , containers
     , diagrams-lib
     , diagrams-svg
+    , mtl
     , tesselation
   default-language: Haskell2010
