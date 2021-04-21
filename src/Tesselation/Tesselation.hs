@@ -76,9 +76,9 @@ myFigs = foldl (===) mempty
  [ renderAngleTree ( regTessTree 100 [3,4,6,4] ) ||| renderAngleTree ( regTessMaze 100 [3,4,6,4] )
  , renderAngleTree ( regTessTree 100 [3,12,12] ) ||| renderAngleTree ( regTessMaze 100 [3,12,12] )
  , renderAngleTree ( regTessTree 100 [4,8,8] ) ||| renderAngleTree ( regTessMaze 100 [4,8,8] )
- , renderAngleTree ( regTessTree 20 [3,6,3,6] ) ||| renderAngleTree ( regTessMaze 20 [3,6,3,6] )
- , renderAngleTree ( regTessTree 20 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze 20 [3,3,3,3,6] )
+ , renderAngleTree ( regTessTree 50 [3,6,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,6,3,6] )
+ , renderAngleTree ( regTessTree 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,3,3,3,6] )
  , renderAngleTree ( regTessTree 100 [4,6,12] ) ||| renderAngleTree ( regTessMaze 100 [4,6,12] )
- , renderAngleTree $ regTessTree 5 [3,3,4,3,4]
- , renderAngleTree $ regTessTree 5 [3,3,3,4,4]
+ , renderAngleTree ( regTessTree 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,4,3,4] )
+ , renderAngleTree ( regTessTree 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,3,4,4] )
  ]
