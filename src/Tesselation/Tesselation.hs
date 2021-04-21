@@ -73,12 +73,12 @@ regTessTree depth0 clock = fst $ CMS.runState (sTileTree (0,0) 0 depth0 clock) S
 
 myFigs :: Diagram S.B
 myFigs = foldl (===) mempty
- [ renderAngleTree ( regTessTree 100 [3,4,6,4] ) ||| renderAngleTree ( regTessMaze 100 [3,4,6,4] )
- , renderAngleTree ( regTessTree 100 [3,12,12] ) ||| renderAngleTree ( regTessMaze 100 [3,12,12] )
- , renderAngleTree ( regTessTree 100 [4,8,8] ) ||| renderAngleTree ( regTessMaze 100 [4,8,8] )
+ [ renderAngleTree ( regTessTree 50 [3,4,6,4] ) ||| renderAngleTree ( regTessMaze 50 [3,4,6,4] )
+ , renderAngleTree ( regTessTree 30 [3,12,12] ) ||| renderAngleTree ( regTessMaze 30 [3,12,12] )
+ , renderAngleTree ( regTessTree 50 [4,8,8] ) ||| renderAngleTree ( regTessMaze 50 [4,8,8] )
  , renderAngleTree ( regTessTree 50 [3,6,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,6,3,6] )
  , renderAngleTree ( regTessTree 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,3,3,3,6] )
- , renderAngleTree ( regTessTree 100 [4,6,12] ) ||| renderAngleTree ( regTessMaze 100 [4,6,12] )
+ , renderAngleTree ( regTessTree 40 [4,6,12] ) ||| renderAngleTree ( regTessMaze 40 [4,6,12] )
  , renderAngleTree ( regTessTree 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,4,3,4] )
  , renderAngleTree ( regTessTree 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,3,4,4] )
  ]

@@ -7,8 +7,8 @@ Work in progress:
 
 That's pretty, but I didn't mean to make it
 
-![d2](images/whawhy.png)
+<img src="images/whawhy.png" width=200>
 
 Yay, almost there:
 
-![d3](image/depth-first-mostly.png)
+![d3](images/depth-first-mostly.png)
