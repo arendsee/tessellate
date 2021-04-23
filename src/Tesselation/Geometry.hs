@@ -24,12 +24,21 @@ import Diagrams.Prelude
 import qualified Diagrams.Backend.SVG.CmdLine as S
 import qualified Diagrams.TwoD.Vector as TwoD
 
-data RoseTree a = RoseTree a [RoseTree a]
+data RoseTree a = RoseTree a [RoseTree a] | RoseLeaf a deriving(Ord, Eq, Show)
+
+instance Functor RoseTree where
+  fmap f (RoseTree x xs) = RoseTree (f x) (map (fmap f) xs) 
+  fmap f (RoseLeaf x) = RoseLeaf (f x)
+
+roseAngle :: RoseTree Double -> Double
+roseAngle (RoseTree a _) = a
+roseAngle (RoseLeaf a) = a
 
 renderAngleTree :: RoseTree Double -> Diagram S.B
-renderAngleTree (RoseTree _ xs) = foldl atop mempty
-  [ atop (angleStroke a) (translate (r2 (cos a, sin a)) (renderAngleTree x))
-  | x@(RoseTree a _) <- xs]
+renderAngleTree (RoseLeaf a) = angleStroke a
+renderAngleTree (RoseTree _ xs) = foldl atop mempty (map f xs) where
+  f x@(RoseTree a _) = translate (r2 (cos a, sin a)) $ atop (angleStroke (a + pi)) (renderAngleTree x)
+  f (RoseLeaf a) = (angleStroke a)
 
 -- counvert a double to a large int that is used to check for node existence in
 -- maps. The original doubles cannot be used because imprecision screw equality.
