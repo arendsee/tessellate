@@ -5,6 +5,7 @@
 module Tesselation.Past () where
 
 import Tesselation.Geometry
+import qualified Diagrams.TwoD.Vector as T
 import qualified Diagrams.Backend.SVG.CmdLine as S
 import qualified Diagrams.TwoD.Vector as TwoD
 
@@ -43,6 +44,11 @@ badTileTree = makeBadTileTree pi where
   newAngle :: Double -> [Int] -> Double
   newAngle angle clock = -1 * sum (map innerAngle clock) + angle + pi
 
+reflectBy :: Double -> Diagram S.B -> Diagram S.B
+reflectBy a d =
+  let d' = rotateBy (-1 * a) d
+  in rotateBy a (d' ||| reflectX d')
+
 myPastFigs :: Diagram S.B
 myPastFigs = foldl (beside (r2 (0,-1))) mempty
  [ circle 1
@@ -73,3 +79,31 @@ myPastFigs = foldl (beside (r2 (0,-1))) mempty
  , foldr1 (|||) [renderAngleTree $ badTileTree i [3,3,3,3,6] | i <- [0..5]]
  , foldr1 (|||) [renderAngleTree $ badTileTree i [4,6,12] | i <- [0..5]]
  ]
+
+pastFigsV2 = vcat
+ [ beside (V2 0 (-1)) k t
+ , beside (V2 0 1) k t
+ , k # snugR <> (rotate (120 @@ deg) t # snugL)
+ , rotate (10 @@ deg) (g # showOrigin # fc blue)
+ , (translate (r2 (0.3, 0.5)) (ngon 5)) # showOrigin # fc grey  -- translate moves the objectin the given direction, leaving the origin where it was
+ , circle 1 # centerX # showOrigin
+ , fromVertices [p2 (0, 0), p2 (0,0.5), p2 (1,1)]
+ , atPoints (regPoly 5 1) [text (show i) # fontSizeL 0.2 <> rotateBy (3/4 + i * 1/5) (circle 0.2 # fc blue <> fromVertices [p2 (0, 0), p2 (0,0.5), p2 (1,1)]) | i <- [0..]]
+ , atPoints (regPoly 16 1) [text (show i) # fontSizeL 0.2 <> circle (0.2 * sqrt i) # fc blue | i <- [1..12]] <> regPoly 16 1
+ , position
+      [ (p, regPoly i (1/ fromIntegral i) # fc (colourConvert c) # lw veryThin)
+      | i <- [3..8]
+      , let p = lerp ((fromIntegral i-2) / 6) (p2 (0,0)) (p2 (10,10))
+      , let c = blend ((fromIntegral i-2)/6) red green
+      ]
+ , fromOffsets [unitX, unitY, 2 *^ unit_X, unit_Y] # centerXY # showOrigin
+ , fromOffsets [unitY, unitY, unitX, unitY, 10 *^ unit_X, unit_Y] # showOrigin
+ , atop
+     (reflectY . reflectX $ fromOffsets [T.e (a @@ deg) | a <- [10,20..180]] # showOrigin)
+     (fromOffsets [T.e (a @@ deg) | a <- [10,20..270]] # showOrigin)
+ , ((reflectBy (1/12) . reflectBy (1/12). reflectBy (1/12)) (ngon 6 # fc green)) # showOrigin
+ ]
+ where
+  k = ngon 3 # fc blue
+  t = ngon 4 # fc green
+  g = scaleY 2 (ngon 4)

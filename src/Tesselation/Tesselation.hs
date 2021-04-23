@@ -5,7 +5,6 @@
 module Tesselation.Tesselation (myFigs) where
 
 import Tesselation.Geometry
-import qualified Diagrams.TwoD.Vector as T
 import Data.Maybe (catMaybes)
 import qualified Diagrams.Backend.SVG.CmdLine as S
 import qualified Data.Set as Set
@@ -137,47 +136,14 @@ regTessTree depth0 clock = fst $ CMS.runState (sTileTree (0,0) 0 depth0 clock) S
         then return $ RoseLeaf a'
         else CMS.put (Set.insert idx s) >> sTileTree (x',y') a' (d-1) c'
 
-reflectBy :: Double -> Diagram S.B -> Diagram S.B
-reflectBy a d =
-  let d' = rotateBy (-1 * a) d
-  in rotateBy a (d' ||| reflectX d')
-
-myFigs :: Diagram S.B
 myFigs = vcat
- [ beside (V2 0 (-1)) k t
- , beside (V2 0 1) k t
- , k # snugR <> (rotate (120 @@ deg) t # snugL)
- , rotate (10 @@ deg) (g # showOrigin # fc blue)
- , (translate (r2 (0.3, 0.5)) (ngon 5)) # showOrigin # fc grey  -- translate moves the objectin the given direction, leaving the origin where it was
- , circle 1 # centerX # showOrigin
- , fromVertices [p2 (0, 0), p2 (0,0.5), p2 (1,1)]
- , atPoints (regPoly 5 1) [text (show i) # fontSizeL 0.2 <> rotateBy (3/4 + i * 1/5) (circle 0.2 # fc blue <> fromVertices [p2 (0, 0), p2 (0,0.5), p2 (1,1)]) | i <- [0..]]
- , atPoints (regPoly 16 1) [text (show i) # fontSizeL 0.2 <> circle (0.2 * sqrt i) # fc blue | i <- [1..12]] <> regPoly 16 1
- , position
-      [ (p, regPoly i (1/ fromIntegral i) # fc (colourConvert c) # lw veryThin)
-      | i <- [3..8]
-      , let p = lerp ((fromIntegral i-2) / 6) (p2 (0,0)) (p2 (10,10))
-      , let c = blend ((fromIntegral i-2)/6) red green
-      ]
- , fromOffsets [unitX, unitY, 2 *^ unit_X, unit_Y] # centerXY # showOrigin
- , fromOffsets [unitY, unitY, unitX, unitY, 10 *^ unit_X, unit_Y] # showOrigin
- , atop
-     (reflectY . reflectX $ fromOffsets [T.e (a @@ deg) | a <- [10,20..180]] # showOrigin)
-     (fromOffsets [T.e (a @@ deg) | a <- [10,20..270]] # showOrigin)
- , ((reflectBy (1/12) . reflectBy (1/12). reflectBy (1/12)) (ngon 6 # fc green)) # showOrigin
+ [ renderAngleTree ( regTessTree 50 [6,6,6]     ) ||| renderAngleTree ( regTessMaze 50 [6,6,6]     ) ||| renderAngleTree ( regTessBreadthTree 12 [6,6,6]     ) ||| renderAngleTree ( regTessBreadthMaze 12 [6,6,6]     )
+ , renderAngleTree ( regTessTree 50 [3,4,6,4]   ) ||| renderAngleTree ( regTessMaze 50 [3,4,6,4]   ) ||| renderAngleTree ( regTessBreadthTree 12 [3,4,6,4]   ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,4,6,4]   )
+ , renderAngleTree ( regTessTree 30 [3,12,12]   ) ||| renderAngleTree ( regTessMaze 30 [3,12,12]   ) ||| renderAngleTree ( regTessBreadthTree 10 [3,12,12]   ) ||| renderAngleTree ( regTessBreadthMaze 10 [3,12,12]   )
+ , renderAngleTree ( regTessTree 50 [4,8,8]     ) ||| renderAngleTree ( regTessMaze 50 [4,8,8]     ) ||| renderAngleTree ( regTessBreadthTree 12 [4,8,8]     ) ||| renderAngleTree ( regTessBreadthMaze 12 [4,8,8]     )
+ , renderAngleTree ( regTessTree 50 [3,6,3,6]   ) ||| renderAngleTree ( regTessMaze 50 [3,6,3,6]   ) ||| renderAngleTree ( regTessBreadthTree 12 [3,6,3,6]   ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,6,3,6]   )
+ , renderAngleTree ( regTessTree 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessBreadthTree 12 [3,3,3,3,6] ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,3,3,3,6] )
+ , renderAngleTree ( regTessTree 40 [4,6,12]    ) ||| renderAngleTree ( regTessMaze 40 [4,6,12]    ) ||| renderAngleTree ( regTessBreadthTree 10 [4,6,12]    ) ||| renderAngleTree ( regTessBreadthMaze 10 [4,6,12]    )
+ , renderAngleTree ( regTessTree 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessBreadthTree 6  [3,3,4,3,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,4,3,4] )
+ , renderAngleTree ( regTessTree 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessBreadthTree 6  [3,3,3,4,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,3,4,4] )
  ]
- where
-  k = ngon 3 # fc blue
-  t = ngon 4 # fc green
-  g = scaleY 2 (ngon 4)
-
- -- [ renderAngleTree ( regTessTree 50 [6,6,6]     ) ||| renderAngleTree ( regTessMaze 50 [6,6,6]     ) ||| renderAngleTree ( regTessBreadthTree 12 [6,6,6]     ) ||| renderAngleTree ( regTessBreadthMaze 12 [6,6,6]     )
- -- , renderAngleTree ( regTessTree 50 [3,4,6,4]   ) ||| renderAngleTree ( regTessMaze 50 [3,4,6,4]   ) ||| renderAngleTree ( regTessBreadthTree 12 [3,4,6,4]   ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,4,6,4]   )
- -- , renderAngleTree ( regTessTree 30 [3,12,12]   ) ||| renderAngleTree ( regTessMaze 30 [3,12,12]   ) ||| renderAngleTree ( regTessBreadthTree 10 [3,12,12]   ) ||| renderAngleTree ( regTessBreadthMaze 10 [3,12,12]   )
- -- , renderAngleTree ( regTessTree 50 [4,8,8]     ) ||| renderAngleTree ( regTessMaze 50 [4,8,8]     ) ||| renderAngleTree ( regTessBreadthTree 12 [4,8,8]     ) ||| renderAngleTree ( regTessBreadthMaze 12 [4,8,8]     )
- -- , renderAngleTree ( regTessTree 50 [3,6,3,6]   ) ||| renderAngleTree ( regTessMaze 50 [3,6,3,6]   ) ||| renderAngleTree ( regTessBreadthTree 12 [3,6,3,6]   ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,6,3,6]   )
- -- , renderAngleTree ( regTessTree 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze 50 [3,3,3,3,6] ) ||| renderAngleTree ( regTessBreadthTree 12 [3,3,3,3,6] ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,3,3,3,6] )
- -- , renderAngleTree ( regTessTree 40 [4,6,12]    ) ||| renderAngleTree ( regTessMaze 40 [4,6,12]    ) ||| renderAngleTree ( regTessBreadthTree 10 [4,6,12]    ) ||| renderAngleTree ( regTessBreadthMaze 10 [4,6,12]    )
- -- , renderAngleTree ( regTessTree 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessBreadthTree 6  [3,3,4,3,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,4,3,4] )
- -- , renderAngleTree ( regTessTree 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessMaze 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessBreadthTree 6  [3,3,3,4,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,3,4,4] )
- -- ]
