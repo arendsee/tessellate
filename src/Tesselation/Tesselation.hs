@@ -40,7 +40,7 @@ regTessBreadthMaze
   -> [Int] -- clock
   -> RoseTree Double
 regTessBreadthMaze d0 clock
-  | d0 < 1 = RoseTree 0 []
+  | d0 < 0 = RoseTree 0 []
   | otherwise = (fmap (\(x,_,_) -> x) . fst)
               $ CMS.runState (CMS.foldM (flip (f 0)) (RoseTree (0, (0,0), clock) []) [0..d0]) Set.empty
   where
@@ -69,7 +69,7 @@ regTessBreadthTree
   -> [Int] -- clock
   -> RoseTree Double
 regTessBreadthTree d0 c0
-  | d0 < 1 = RoseTree 0 []
+  | d0 < 0 = RoseTree 0 []
   | otherwise = (fmap (\(x,_,_) -> x) . fst)
               $ CMS.runState (CMS.foldM (flip (f 0)) (RoseTree (0, (0,0), c0) []) [0..d0]) Set.empty
   where
@@ -133,7 +133,9 @@ myFigs = vcat
  , renderAngleTree ( regTessMaze True 40 [3,3,3,3,6] ) ||| renderAngleTree ( regTessMaze False 40 [3,3,3,3,6] ) |||renderAngleTree ( regTessBreadthTree 12 [3,3,3,3,6] ) ||| renderAngleTree ( regTessBreadthMaze 12 [3,3,3,3,6] )
  , renderAngleTree ( regTessMaze True 25 [3,3,4,3,4] ) ||| renderAngleTree ( regTessMaze False 25 [3,3,4,3,4] ) |||renderAngleTree ( regTessBreadthTree 6  [3,3,4,3,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,4,3,4] )
  , renderAngleTree ( regTessMaze True 25 [3,3,3,4,4] ) ||| renderAngleTree ( regTessMaze False 25 [3,3,3,4,4] ) |||renderAngleTree ( regTessBreadthTree 6  [3,3,3,4,4] ) ||| renderAngleTree ( regTessBreadthMaze 6  [3,3,3,4,4] )
- -- [ renderAngleTree ( regTessBreadthTree 1 [3,3,3,4,4]   ) # showOrigin
- -- , hrule 10 # fc blue
- -- , renderAngleTree ( regTessBreadthMaze 1 [3,3,3,4,4]   ) # showOrigin
+ -- , renderAngleTree ( regTessBreadthTree 3 [3,4,6,4] ) # showOrigin ||| renderAngleTree ( regTessBreadthMaze 3 [3,4,6,4] ) # showOrigin
+ -- , hrule 10 # lc blue
+ -- , renderAngleTree ( regTessBreadthTree 0 [3,3,3,4,4] ) # showOrigin ||| vrule 3 # lc blue ||| renderAngleTree ( regTessBreadthTree 1 [3,3,3,4,4] ) # showOrigin
+ -- , hrule 10 # lc blue
+ -- , renderAngleTree ( regTessBreadthMaze 0 [3,3,3,4,4] ) # showOrigin ||| vrule 3 # lc blue ||| renderAngleTree ( regTessBreadthMaze 1 [3,3,3,4,4] ) # showOrigin
  ]
